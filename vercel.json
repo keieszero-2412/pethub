@@ -4,7 +4,8 @@
     { "source": "/booking", "destination": "/src/pages/booking.html" },
     { "source": "/health", "destination": "/src/pages/health.html" },
     { "source": "/rescue", "destination": "/src/pages/rescue.html" },
-    { "source": "/dashboard", "destination": "/src/pages/index.html" }
+    { "source": "/dashboard", "destination": "/src/pages/index.html" },
+    { "source": "/((?!api/).*)", "destination": "/$1" }
   ],
   "headers": [
     {
