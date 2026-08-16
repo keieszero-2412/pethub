@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PetHub Shop — Browse premium pet food, toys, accessories, and health supplies. Fast delivery and great prices.">
+    <title>Pet Shop — PetHub</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+    <style>
+        .shop-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl) var(--space-4xl);
+        }
+
+        .shop-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .shop-search {
+            position: relative;
+            width: 320px;
+            max-width: 100%;
+        }
+
+        .shop-search input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-full);
+            color: var(--text-primary);
+            font-size: var(--fs-sm);
+            transition: all var(--transition-base);
+            outline: none;
+        }
+
+        .shop-search input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+        }
+
+        .shop-search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .product-count {
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .product-img-wrapper {
+            position: relative;
+            overflow: hidden;
+            height: 220px;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+
+        .product-card:hover .product-img {
+            transform: scale(1.08);
+        }
+
+        .product-category-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+        }
+
+        .product-body {
+            padding: var(--space-lg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-name {
+            font-family: var(--font-heading);
+            font-size: var(--fs-md);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+            color: var(--text-primary);
+        }
+
+        .product-desc {
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            line-height: var(--lh-relaxed);
+            margin-bottom: var(--space-md);
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .product-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-sm);
+        }
+
+        .product-stock {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+        }
+
+        .product-stock.low {
+            color: #f59e0b;
+        }
+
+        .add-to-cart-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-md);
+            font-family: var(--font-heading);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .add-to-cart-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(var(--color-primary-rgb), 0.4);
+        }
+
+        .add-to-cart-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Category Cards at top */
+        .category-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .category-card {
+            background: var(--bg-card);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .category-card:hover,
+        .category-card.active {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-md);
+        }
+
+        .category-card.active {
+            background: rgba(var(--color-primary-rgb), 0.04);
+        }
+
+        .category-card-icon {
+            font-size: 2rem;
+            margin-bottom: var(--space-sm);
+        }
+
+        .category-card-name {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: var(--fs-sm);
+        }
+
+        .category-card-count {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .category-cards { grid-template-columns: repeat(2, 1fr); }
+            .shop-toolbar { flex-direction: column; align-items: stretch; }
+            .shop-search { width: 100%; }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-logo">
+                <span class="logo-icon">🐾</span>
+                <span>PetHub</span>
+            </a>
+            <div class="navbar-links" id="navLinks">
+                <a href="index.html">🏠 Dashboard</a>
+                <a href="shop.html" class="active">🛍️ Shop</a>
+                <a href="booking.html">📅 Booking</a>
+                <a href="health.html">💊 Health</a>
+                <a href="rescue.html">🐶 Rescue</a>
+            </div>
+            <div class="navbar-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button class="cart-btn" onclick="Cart.toggleDrawer()" id="cartBtn" aria-label="Shopping cart">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <h3>🛒 Your Cart</h3>
+            <button class="modal-close" onclick="Cart.toggleDrawer()">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cartDrawerBody"></div>
+        <div class="cart-drawer-footer" id="cartDrawerFooter"></div>
+    </aside>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <span class="section-label">🛍️ Pet Shop</span>
+        <h1>Premium Pet Supplies</h1>
+        <p>Quality food, toys, accessories, and health products for your beloved pets.</p>
+    </header>
+
+    <!-- Shop Content -->
+    <main class="shop-layout">
+        <!-- Category Cards -->
+        <div class="category-cards" id="categoryCards">
+            <div class="category-card active" data-category="all" onclick="filterByCategory('all')">
+                <div class="category-card-icon">🌟</div>
+                <div class="category-card-name">All Products</div>
+                <div class="category-card-count" id="countAll">0 items</div>
+            </div>
+            <div class="category-card" data-category="food" onclick="filterByCategory('food')">
+                <div class="category-card-icon">🍖</div>
+                <div class="category-card-name">Food</div>
+                <div class="category-card-count" id="countFood">0 items</div>
+            </div>
+            <div class="category-card" data-category="toys" onclick="filterByCategory('toys')">
+                <div class="category-card-icon">🎾</div>
+                <div class="category-card-name">Toys</div>
+                <div class="category-card-count" id="countToys">0 items</div>
+            </div>
+            <div class="category-card" data-category="accessories" onclick="filterByCategory('accessories')">
+                <div class="category-card-icon">🎀</div>
+                <div class="category-card-name">Accessories</div>
+                <div class="category-card-count" id="countAccessories">0 items</div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Toolbar -->
+        <div class="shop-toolbar">
+            <div class="filter-bar" id="filterBar">
+                <button class="filter-btn active" data-filter="all" onclick="filterByCategory('all')">All</button>
+                <button class="filter-btn" data-filter="food" onclick="filterByCategory('food')">🍖 Food</button>
+                <button class="filter-btn" data-filter="toys" onclick="filterByCategory('toys')">🎾 Toys</button>
+                <button class="filter-btn" data-filter="accessories" onclick="filterByCategory('accessories')">🎀 Accessories</button>
+                <button class="filter-btn" data-filter="health" onclick="filterByCategory('health')">💊 Health</button>
+            </div>
+            <div class="d-flex items-center gap-md">
+                <span class="product-count" id="productCount">0 products</span>
+                <div class="shop-search">
+                    <span class="shop-search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search products..." oninput="handleSearch(this.value)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="products-grid" id="productsGrid">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Loading products...</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="navbar-logo">
+                    <span class="logo-icon">🐾</span>
+                    <span>PetHub</span>
+                </a>
+                <p>Your all-in-one pet ecosystem. Shop supplies, book services, track health, and adopt rescue pets.</p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Platform</h4>
+                <div class="footer-links">
+                    <a href="shop.html">Pet Shop</a>
+                    <a href="booking.html">Book Services</a>
+                    <a href="health.html">Health Tracker</a>
+                    <a href="rescue.html">Rescue & Adopt</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Services</h4>
+                <div class="footer-links">
+                    <a href="booking.html">Grooming</a>
+                    <a href="booking.html">Vet Checkup</a>
+                    <a href="booking.html">Pet Walking</a>
+                    <a href="booking.html">Pet Boarding</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <div class="footer-links">
+                    <a href="#">Help Center</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PetHub. Made with ❤️ for pets everywhere.</span>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="YouTube">🎥</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        let allProducts = [];
+        let currentCategory = 'all';
+        let searchQuery = '';
+
+        // ========================================
+        // Load Products
+        // ========================================
+        async function loadProducts() {
+            allProducts = await API.fetchProducts();
+            updateCategoryCounts();
+            renderProducts();
+        }
+
+        // ========================================
+        // Update Category Counts
+        // ========================================
+        function updateCategoryCounts() {
+            const counts = { all: allProducts.length };
+            allProducts.forEach(p => {
+                counts[p.category] = (counts[p.category] || 0) + 1;
+            });
+            
+            document.getElementById('countAll').textContent = `${counts.all || 0} items`;
+            document.getElementById('countFood').textContent = `${counts.food || 0} items`;
+            document.getElementById('countToys').textContent = `${counts.toys || 0} items`;
+            document.getElementById('countAccessories').textContent = `${counts.accessories || 0} items`;
+        }
+
+        // ========================================
+        // Filter by Category
+        // ========================================
+        function filterByCategory(category) {
+            currentCategory = category;
+
+            // Update category cards
+            document.querySelectorAll('.category-card').forEach(card => {
+                card.classList.toggle('active', card.dataset.category === category);
+            });
+
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === category);
+            });
+
+            renderProducts();
+        }
+
+        // ========================================
+        // Search Handler
+        // ========================================
+        let searchTimeout;
+        function handleSearch(query) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = query.toLowerCase();
+                renderProducts();
+            }, 200);
+        }
+
+        // ========================================
+        // Render Products
+        // ========================================
+        function renderProducts() {
+            let filtered = [...allProducts];
+
+            if (currentCategory !== 'all') {
+                filtered = filtered.filter(p => p.category === currentCategory);
+            }
+
+            if (searchQuery) {
+                filtered = filtered.filter(p =>
+                    p.name.toLowerCase().includes(searchQuery) ||
+                    p.description.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            document.getElementById('productCount').textContent = `${filtered.length} product${filtered.length !== 1 ? 's' : ''}`;
+
+            const grid = document.getElementById('productsGrid');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>No products found</h3>
+                        <p>Try changing your filters or search query.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const categoryIcons = {
+                food: '🍖',
+                toys: '🎾',
+                accessories: '🎀',
+                health: '💊'
+            };
+
+            grid.innerHTML = filtered.map((product, i) => `
+                <div class="product-card animate-fade-in-up stagger-${(i % 5) + 1}">
+                    <div class="product-img-wrapper">
+                        <img src="${product.image}" alt="${product.name}" class="product-img" loading="lazy">
+                        <span class="product-category-badge badge badge-primary">
+                            ${categoryIcons[product.category] || ''} ${product.category}
+                        </span>
+                    </div>
+                    <div class="product-body">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-desc">${product.description}</div>
+                        <div class="product-meta">
+                            <span class="price">
+                                <span class="price-currency">$</span>${product.price.toFixed(2)}
+                            </span>
+                            <div class="rating">
+                                ${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5 - Math.floor(product.rating))}
+                                <span class="rating-value">${product.rating}</span>
+                            </div>
+                        </div>
+                        <div class="product-footer">
+                            <span class="product-stock ${product.stock < 25 ? 'low' : ''}">
+                                ${product.stock < 25 ? '⚠️ Only ' + product.stock + ' left' : '✓ In stock'}
+                            </span>
+                            <button class="add-to-cart-btn" onclick='Cart.addItem(${JSON.stringify(product)})'>
+                                🛒 Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>

@@ -1,0 +1,2 @@
+# No external dependencies required.
+# Using standard Python libraries for JSON and HTTP handling in Vercel Serverless Functions.

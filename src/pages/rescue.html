@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Adopt a rescue pet today. Browse adoptable dogs, cats, birds, and rabbits looking for a loving forever home.">
+    <title>Rescue & Adopt — PetHub</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+    <style>
+        .rescue-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl) var(--space-4xl);
+        }
+
+        /* Hero Banner */
+        .rescue-hero {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            border-radius: var(--radius-xl);
+            padding: var(--space-4xl) var(--space-2xl);
+            text-align: center;
+            margin-bottom: var(--space-3xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rescue-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+        }
+
+        .rescue-hero h2 {
+            font-size: var(--fs-3xl);
+            margin-bottom: var(--space-sm);
+        }
+
+        .rescue-hero p {
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: var(--fs-md);
+            color: var(--text-secondary);
+        }
+
+        /* Toolbar */
+        .rescue-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .rescue-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            flex-wrap: wrap;
+        }
+
+        /* Pet Grid */
+        .pet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: var(--space-xl);
+        }
+
+        .pet-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .pet-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .pet-img-wrapper {
+            position: relative;
+            height: 240px;
+            overflow: hidden;
+        }
+
+        .pet-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-slow);
+        }
+
+        .pet-card:hover .pet-img {
+            transform: scale(1.05);
+        }
+
+        .pet-status-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 1;
+        }
+
+        .pet-body {
+            padding: var(--space-lg);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .pet-name {
+            font-family: var(--font-heading);
+            font-size: var(--fs-lg);
+            font-weight: 700;
+        }
+
+        .pet-gender {
+            font-size: 1.2rem;
+        }
+
+        .pet-gender.male { color: #3b82f6; }
+        .pet-gender.female { color: #ec4899; }
+
+        .pet-breed-age {
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            margin-bottom: var(--space-sm);
+        }
+
+        .pet-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+            margin-bottom: var(--space-md);
+        }
+
+        .pet-desc {
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
+            line-height: var(--lh-relaxed);
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            flex: 1;
+        }
+
+        /* Pet Detail Modal */
+        .pet-detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-xl);
+        }
+
+        .pet-detail-img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: var(--radius-lg);
+        }
+
+        .pet-detail-info h3 {
+            font-size: var(--fs-3xl);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .pet-detail-meta {
+            display: flex;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .pet-detail-section {
+            margin-bottom: var(--space-lg);
+        }
+
+        .pet-detail-section h4 {
+            font-size: var(--fs-md);
+            margin-bottom: var(--space-sm);
+            border-bottom: 1px solid var(--border-color-light);
+            padding-bottom: 8px;
+        }
+
+        .pet-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+        }
+
+        .trait-tag {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: var(--radius-full);
+            font-size: var(--fs-sm);
+            color: var(--text-secondary);
+        }
+
+        /* Adoption Form (inside modal) */
+        .adoption-form {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .adoption-form.active {
+            display: block;
+        }
+
+        .pet-detail-content.hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .pet-detail-layout { grid-template-columns: 1fr; }
+            .pet-detail-img { height: 250px; }
+            .rescue-toolbar { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-logo">
+                <span class="logo-icon">🐾</span>
+                <span>PetHub</span>
+            </a>
+            <div class="navbar-links" id="navLinks">
+                <a href="index.html">🏠 Dashboard</a>
+                <a href="shop.html">🛍️ Shop</a>
+                <a href="booking.html">📅 Booking</a>
+                <a href="health.html">💊 Health</a>
+                <a href="rescue.html" class="active">🐶 Rescue</a>
+            </div>
+            <div class="navbar-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button class="cart-btn" onclick="Cart.toggleDrawer()" id="cartBtn" aria-label="Shopping cart">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <h3>🛒 Your Cart</h3>
+            <button class="modal-close" onclick="Cart.toggleDrawer()">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cartDrawerBody"></div>
+        <div class="cart-drawer-footer" id="cartDrawerFooter"></div>
+    </aside>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <span class="section-label">🏠 Rescue & Adopt</span>
+        <h1>Find Your Forever Friend</h1>
+        <p>Give a rescue pet a second chance at love and a happy home.</p>
+    </header>
+
+    <main class="rescue-layout">
+        <!-- Hero Banner -->
+        <div class="rescue-hero">
+            <h2>Our Adoption Process is Simple</h2>
+            <p>Browse available pets, submit an adoption interest form, and our team will get in touch to schedule a meet-and-greet.</p>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="rescue-toolbar">
+            <div class="rescue-toolbar-left">
+                <div class="filter-bar" style="margin-bottom: 0;">
+                    <button class="filter-btn active" data-filter="all" onclick="filterPets('all')">All Pets</button>
+                    <button class="filter-btn" data-filter="dog" onclick="filterPets('dog')">🐕 Dogs</button>
+                    <button class="filter-btn" data-filter="cat" onclick="filterPets('cat')">🐈 Cats</button>
+                    <button class="filter-btn" data-filter="bird" onclick="filterPets('bird')">🐦 Birds</button>
+                    <button class="filter-btn" data-filter="rabbit" onclick="filterPets('rabbit')">🐰 Rabbits</button>
+                </div>
+            </div>
+            <div class="d-flex items-center gap-sm">
+                <select class="form-select" id="statusFilter" style="width: 180px;" onchange="filterPetsByStatus(this.value)">
+                    <option value="all">All Statuses</option>
+                    <option value="available" selected>Available</option>
+                    <option value="pending">Adoption Pending</option>
+                    <option value="adopted">Adopted</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Pet Grid -->
+        <div class="pet-grid" id="petGrid">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <span>Loading pets...</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Pet Detail Modal -->
+    <div class="modal-overlay" id="petModal">
+        <div class="modal" style="max-width: 900px;">
+            <div class="modal-header">
+                <button class="btn btn-secondary btn-sm" id="backToDetailBtn" style="display: none;" onclick="toggleAdoptionForm(false)">
+                    ← Back to Details
+                </button>
+                <div style="flex:1;"></div>
+                <button class="modal-close" onclick="closeModal('petModal')">✕</button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                
+                <!-- Pet Info Content -->
+                <div class="pet-detail-content" id="petDetailContent">
+                    <!-- Dynamically populated -->
+                </div>
+
+                <!-- Adoption Form -->
+                <div class="adoption-form" id="adoptionFormSection">
+                    <div style="padding: var(--space-xl);">
+                        <h3 style="margin-bottom: var(--space-md);">Adoption Application</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-xl);">
+                            Please fill out this form to express your interest in adopting <strong id="adoptPetNameText" class="text-primary"></strong>.
+                        </p>
+
+                        <form id="adoptionForm" onsubmit="handleAdoptionSubmit(event)">
+                            <input type="hidden" id="adoptPetId">
+                            
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name *</label>
+                                    <input type="text" class="form-input" id="adoptName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number *</label>
+                                    <input type="tel" class="form-input" id="adoptPhone" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email Address *</label>
+                                <input type="email" class="form-input" id="adoptEmail" required>
+                            </div>
+
+                            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                                <div class="form-group">
+                                    <label class="form-label">Living Situation *</label>
+                                    <select class="form-select" id="adoptHousing" required>
+                                        <option value="">Select...</option>
+                                        <option value="house-own">Own a House</option>
+                                        <option value="house-rent">Rent a House</option>
+                                        <option value="apt-own">Own an Apartment</option>
+                                        <option value="apt-rent">Rent an Apartment</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Do you have a fenced yard?</label>
+                                    <select class="form-select" id="adoptYard">
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Tell us why you'd be a great match for this pet *</label>
+                                <textarea class="form-textarea" id="adoptReason" required rows="4"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-full">Submit Application</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="navbar-logo">
+                    <span class="logo-icon">🐾</span>
+                    <span>PetHub</span>
+                </a>
+                <p>Your all-in-one pet ecosystem. Shop supplies, book services, track health, and adopt rescue pets.</p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Platform</h4>
+                <div class="footer-links">
+                    <a href="shop.html">Pet Shop</a>
+                    <a href="booking.html">Book Services</a>
+                    <a href="health.html">Health Tracker</a>
+                    <a href="rescue.html">Rescue & Adopt</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Services</h4>
+                <div class="footer-links">
+                    <a href="booking.html">Grooming</a>
+                    <a href="booking.html">Vet Checkup</a>
+                    <a href="booking.html">Pet Walking</a>
+                    <a href="booking.html">Pet Boarding</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <div class="footer-links">
+                    <a href="#">Help Center</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PetHub. Made with ❤️ for pets everywhere.</span>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="YouTube">🎥</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        let allPets = [];
+        let currentType = 'all';
+        let currentStatus = 'available';
+
+        // ========================================
+        // Initialization
+        // ========================================
+        document.addEventListener('DOMContentLoaded', async () => {
+            allPets = await API.fetchPets();
+            renderPets();
+        });
+
+        // ========================================
+        // Filtering
+        // ========================================
+        function filterPets(type) {
+            currentType = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === type);
+            });
+            renderPets();
+        }
+
+        function filterPetsByStatus(status) {
+            currentStatus = status;
+            renderPets();
+        }
+
+        // ========================================
+        // Render Pets Grid
+        // ========================================
+        function renderPets() {
+            let filtered = [...allPets];
+
+            if (currentType !== 'all') {
+                filtered = filtered.filter(p => p.type === currentType);
+            }
+            if (currentStatus !== 'all') {
+                filtered = filtered.filter(p => p.status === currentStatus);
+            }
+
+            const grid = document.getElementById('petGrid');
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">🐶</div>
+                        <h3>No pets found</h3>
+                        <p>We couldn't find any pets matching your criteria.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const statusColors = {
+                available: 'success',
+                pending: 'warning',
+                adopted: 'info'
+            };
+
+            grid.innerHTML = filtered.map((pet, i) => `
+                <div class="pet-card animate-fade-in-up stagger-${(i % 5) + 1}" onclick="openPetDetail(${pet.id})">
+                    <div class="pet-img-wrapper">
+                        <span class="pet-status-badge badge badge-${statusColors[pet.status]}">
+                            ${pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
+                        </span>
+                        <img src="${pet.image}" alt="${pet.name}" class="pet-img" loading="lazy">
+                    </div>
+                    <div class="pet-body">
+                        <div class="pet-header">
+                            <h3 class="pet-name">${pet.name}</h3>
+                            <span class="pet-gender ${pet.gender.toLowerCase()}">${pet.gender === 'Male' ? '♂' : '♀'}</span>
+                        </div>
+                        <div class="pet-breed-age">${pet.breed} · ${pet.age}</div>
+                        <div class="pet-tags">
+                            ${pet.vaccinated ? '<span class="badge badge-primary">Vaccinated</span>' : ''}
+                            ${pet.neutered ? '<span class="badge badge-accent">Neutered</span>' : ''}
+                        </div>
+                        <p class="pet-desc">${pet.description}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ========================================
+        // Modal & Details
+        // ========================================
+        function openPetDetail(id) {
+            const pet = allPets.find(p => p.id === id);
+            if (!pet) return;
+
+            const statusColors = { available: 'success', pending: 'warning', adopted: 'info' };
+            
+            const content = document.getElementById('petDetailContent');
+            content.innerHTML = `
+                <div class="pet-detail-layout" style="padding: var(--space-xl);">
+                    <div>
+                        <img src="${pet.image}" alt="${pet.name}" class="pet-detail-img">
+                    </div>
+                    <div>
+                        <div class="pet-detail-info">
+                            <h3>
+                                ${pet.name} 
+                                <span class="pet-gender ${pet.gender.toLowerCase()}">${pet.gender === 'Male' ? '♂' : '♀'}</span>
+                            </h3>
+                            <div class="pet-detail-meta">
+                                <span>${pet.breed}</span> • <span>${pet.age}</span>
+                            </div>
+                            
+                            <div class="pet-tags" style="margin-bottom: var(--space-lg);">
+                                <span class="badge badge-${statusColors[pet.status]}">
+                                    ${pet.status.charAt(0).toUpperCase() + pet.status.slice(1)}
+                                </span>
+                                ${pet.vaccinated ? '<span class="badge badge-primary">Vaccinated ✓</span>' : ''}
+                                ${pet.neutered ? '<span class="badge badge-accent">Spayed/Neutered ✓</span>' : ''}
+                            </div>
+
+                            <div class="pet-detail-section">
+                                <h4>About ${pet.name}</h4>
+                                <p style="color: var(--text-secondary); line-height: var(--lh-relaxed);">
+                                    ${pet.description}
+                                </p>
+                            </div>
+
+                            <div class="pet-detail-section">
+                                <h4>Temperament</h4>
+                                <div class="pet-traits">
+                                    ${pet.temperament ? pet.temperament.map(t => `<span class="trait-tag">${t}</span>`).join('') : '<span class="trait-tag">Loving</span>'}
+                                </div>
+                            </div>
+                            
+                            ${pet.status === 'available' ? `
+                                <div style="margin-top: var(--space-2xl);">
+                                    <button class="btn btn-primary btn-lg w-full" onclick="toggleAdoptionForm(true)">
+                                        🐾 Apply to Adopt ${pet.name}
+                                    </button>
+                                </div>
+                            ` : `
+                                <div style="margin-top: var(--space-2xl); padding: var(--space-md); background: var(--bg-secondary); border-radius: var(--radius-md); text-align: center;">
+                                    <p style="color: var(--text-muted); font-weight: 500;">
+                                        ${pet.status === 'pending' ? 'Adoption is currently pending.' : 'This pet has found their forever home! ❤️'}
+                                    </p>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Setup form data
+            document.getElementById('adoptPetId').value = pet.id;
+            document.getElementById('adoptPetNameText').textContent = pet.name;
+
+            // Reset modal state
+            toggleAdoptionForm(false);
+            
+            // Open modal
+            document.getElementById('petModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function toggleAdoptionForm(showForm) {
+            const detailContent = document.getElementById('petDetailContent');
+            const formSection = document.getElementById('adoptionFormSection');
+            const backBtn = document.getElementById('backToDetailBtn');
+
+            if (showForm) {
+                detailContent.classList.add('hidden');
+                formSection.classList.add('active');
+                backBtn.style.display = 'block';
+                document.getElementById('adoptionForm').reset();
+            } else {
+                detailContent.classList.remove('hidden');
+                formSection.classList.remove('active');
+                backBtn.style.display = 'none';
+            }
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) closeModal(overlay.id);
+            });
+        });
+
+        // ========================================
+        // Handle Adoption Submission
+        // ========================================
+        function handleAdoptionSubmit(e) {
+            e.preventDefault();
+            
+            // In a real app, this would be an API call
+            showToast('Application submitted! We will contact you soon.', 'success');
+            
+            // Close modal
+            closeModal('petModal');
+        }
+    </script>
+</body>
+</html>

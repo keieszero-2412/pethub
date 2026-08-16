@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "Premium Dry Dog Food",
+    "category": "food",
+    "price": 45.99,
+    "image": "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=400&h=300&fit=crop",
+    "description": "High-quality, grain-free dry food made with real chicken and sweet potatoes. Perfect for adult dogs of all breeds.",
+    "rating": 4.8,
+    "stock": 50
+  },
+  {
+    "id": 2,
+    "name": "Organic Cat Wet Food Pack",
+    "category": "food",
+    "price": 32.50,
+    "image": "https://images.unsplash.com/photo-1574158622682-e40e69881006?w=400&h=300&fit=crop",
+    "description": "Pack of 12 organic wet food pouches with salmon and tuna. No artificial preservatives or flavors.",
+    "rating": 4.6,
+    "stock": 75
+  },
+  {
+    "id": 3,
+    "name": "Natural Bird Seed Mix",
+    "category": "food",
+    "price": 18.99,
+    "image": "https://images.unsplash.com/photo-1552728089-57bdde30beb3?w=400&h=300&fit=crop",
+    "description": "Premium blend of sunflower seeds, millet, and dried fruits for parakeets, canaries, and finches.",
+    "rating": 4.5,
+    "stock": 40
+  },
+  {
+    "id": 4,
+    "name": "Interactive Puzzle Ball",
+    "category": "toys",
+    "price": 15.99,
+    "image": "https://images.unsplash.com/photo-1535294435445-d7249524ef2e?w=400&h=300&fit=crop",
+    "description": "Durable rubber puzzle ball that dispenses treats. Keeps dogs mentally stimulated for hours.",
+    "rating": 4.7,
+    "stock": 30
+  },
+  {
+    "id": 5,
+    "name": "Feather Teaser Wand",
+    "category": "toys",
+    "price": 9.99,
+    "image": "https://images.unsplash.com/photo-1526336024174-e58f5cdd8e13?w=400&h=300&fit=crop",
+    "description": "Colorful feather wand toy with bells. Irresistible for cats — encourages exercise and play.",
+    "rating": 4.4,
+    "stock": 60
+  },
+  {
+    "id": 6,
+    "name": "Rope Tug Toy Set",
+    "category": "toys",
+    "price": 12.49,
+    "image": "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=400&h=300&fit=crop",
+    "description": "Set of 3 durable cotton rope toys in different sizes. Great for tug-of-war and dental health.",
+    "rating": 4.3,
+    "stock": 45
+  },
+  {
+    "id": 7,
+    "name": "Luxury Pet Bed — Medium",
+    "category": "accessories",
+    "price": 59.99,
+    "image": "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=400&h=300&fit=crop",
+    "description": "Ultra-soft memory foam pet bed with removable, washable cover. Orthopedic support for joints.",
+    "rating": 4.9,
+    "stock": 20
+  },
+  {
+    "id": 8,
+    "name": "Adjustable Dog Harness",
+    "category": "accessories",
+    "price": 27.99,
+    "image": "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop",
+    "description": "Breathable mesh harness with reflective strips for nighttime safety. No-pull front clip design.",
+    "rating": 4.6,
+    "stock": 35
+  },
+  {
+    "id": 9,
+    "name": "Automatic Water Fountain",
+    "category": "accessories",
+    "price": 34.99,
+    "image": "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400&h=300&fit=crop",
+    "description": "2L capacity water fountain with carbon filter. Encourages cats and dogs to drink more water.",
+    "rating": 4.7,
+    "stock": 25
+  },
+  {
+    "id": 10,
+    "name": "Flea & Tick Prevention Drops",
+    "category": "health",
+    "price": 38.99,
+    "image": "https://images.unsplash.com/photo-1583337130417-13104dec14c3?w=400&h=300&fit=crop",
+    "description": "Monthly topical treatment for dogs. Kills fleas, ticks, and mosquitoes on contact. 3-month supply.",
+    "rating": 4.5,
+    "stock": 55
+  },
+  {
+    "id": 11,
+    "name": "Joint Health Supplements",
+    "category": "health",
+    "price": 24.99,
+    "image": "https://images.unsplash.com/photo-1585373683920-671438c82bfa?w=400&h=300&fit=crop",
+    "description": "Glucosamine & chondroitin chewable tablets for dogs. Supports joint mobility and reduces inflammation.",
+    "rating": 4.8,
+    "stock": 40
+  },
+  {
+    "id": 12,
+    "name": "Pet First Aid Kit",
+    "category": "health",
+    "price": 29.99,
+    "image": "https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=400&h=300&fit=crop",
+    "description": "Complete emergency kit with bandages, antiseptic wipes, tweezers, thermometer, and guide book.",
+    "rating": 4.9,
+    "stock": 30
+  }
+]

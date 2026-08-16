@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Book pet care services — grooming, vet checkups, pet walking, and boarding. Schedule your appointment today.">
+    <title>Service Booking — PetHub</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+    <style>
+        .booking-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl) var(--space-4xl);
+        }
+
+        /* Service Cards */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-lg);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .service-card {
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            position: relative;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .service-card.selected {
+            border-color: var(--color-primary);
+            background: rgba(var(--color-primary-rgb), 0.03);
+            box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+        }
+
+        .service-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 24px;
+            height: 24px;
+            background: var(--color-primary);
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--fs-xs);
+            font-weight: 700;
+        }
+
+        .service-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto var(--space-md);
+        }
+
+        .service-card:nth-child(1) .service-icon { background: rgba(255,107,107,0.1); }
+        .service-card:nth-child(2) .service-icon { background: rgba(78,205,196,0.1); }
+        .service-card:nth-child(3) .service-icon { background: rgba(255,230,109,0.1); }
+        .service-card:nth-child(4) .service-icon { background: rgba(59,130,246,0.1); }
+
+        .service-name {
+            font-family: var(--font-heading);
+            font-size: var(--fs-md);
+            font-weight: 700;
+            margin-bottom: var(--space-xs);
+        }
+
+        .service-desc {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+            margin-bottom: var(--space-sm);
+            line-height: var(--lh-relaxed);
+        }
+
+        .service-price {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            color: var(--color-primary);
+            font-size: var(--fs-lg);
+        }
+
+        /* Booking Form */
+        .booking-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: var(--space-2xl);
+        }
+
+        .booking-form-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+        }
+
+        .booking-form-card h3 {
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-lg);
+        }
+
+        /* Time Slots */
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-sm);
+        }
+
+        .time-slot {
+            padding: 10px;
+            text-align: center;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--fs-sm);
+            font-weight: 500;
+            transition: all var(--transition-base);
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+        }
+
+        .time-slot:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .time-slot.selected {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: white;
+        }
+
+        .time-slot.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Booking History */
+        .booking-history-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            height: fit-content;
+        }
+
+        .booking-history-card h3 {
+            margin-bottom: var(--space-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .history-item {
+            padding: var(--space-md);
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-sm);
+            transition: all var(--transition-fast);
+        }
+
+        .history-item:hover {
+            background: rgba(var(--color-primary-rgb), 0.02);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-xs);
+        }
+
+        .history-item-service {
+            font-weight: 700;
+            font-size: var(--fs-sm);
+        }
+
+        .history-item-detail {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+        }
+
+        .history-item-id {
+            font-family: monospace;
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+        }
+
+        /* Success State */
+        .booking-success {
+            text-align: center;
+            padding: var(--space-3xl) var(--space-xl);
+            animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .booking-success-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto var(--space-lg);
+        }
+
+        .booking-success h3 {
+            color: #16a34a;
+            margin-bottom: var(--space-sm);
+        }
+
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .booking-content { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 480px) {
+            .services-grid { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .time-slots { grid-template-columns: repeat(3, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-logo">
+                <span class="logo-icon">🐾</span>
+                <span>PetHub</span>
+            </a>
+            <div class="navbar-links" id="navLinks">
+                <a href="index.html">🏠 Dashboard</a>
+                <a href="shop.html">🛍️ Shop</a>
+                <a href="booking.html" class="active">📅 Booking</a>
+                <a href="health.html">💊 Health</a>
+                <a href="rescue.html">🐶 Rescue</a>
+            </div>
+            <div class="navbar-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button class="cart-btn" onclick="Cart.toggleDrawer()" id="cartBtn" aria-label="Shopping cart">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <h3>🛒 Your Cart</h3>
+            <button class="modal-close" onclick="Cart.toggleDrawer()">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cartDrawerBody"></div>
+        <div class="cart-drawer-footer" id="cartDrawerFooter"></div>
+    </aside>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <span class="section-label">📅 Service Booking</span>
+        <h1>Book Pet Care Services</h1>
+        <p>Professional grooming, vet checkups, pet walking, and boarding services.</p>
+    </header>
+
+    <main class="booking-layout">
+        <!-- Service Selection -->
+        <div class="services-grid" id="servicesGrid">
+            <div class="service-card" data-service="grooming" onclick="selectService(this, 'grooming')">
+                <div class="service-icon">✂️</div>
+                <div class="service-name">Grooming</div>
+                <div class="service-desc">Full bath, haircut, nail trimming, and ear cleaning for your pet.</div>
+                <div class="service-price">$45</div>
+            </div>
+            <div class="service-card" data-service="vet-checkup" onclick="selectService(this, 'vet-checkup')">
+                <div class="service-icon">🩺</div>
+                <div class="service-name">Vet Checkup</div>
+                <div class="service-desc">Comprehensive health exam, vaccinations, and wellness screening.</div>
+                <div class="service-price">$80</div>
+            </div>
+            <div class="service-card" data-service="pet-walking" onclick="selectService(this, 'pet-walking')">
+                <div class="service-icon">🚶</div>
+                <div class="service-name">Pet Walking</div>
+                <div class="service-desc">45-minute walk with an experienced handler. Includes photos!</div>
+                <div class="service-price">$25</div>
+            </div>
+            <div class="service-card" data-service="boarding" onclick="selectService(this, 'boarding')">
+                <div class="service-icon">🏠</div>
+                <div class="service-name">Pet Boarding</div>
+                <div class="service-desc">Overnight stay with spacious rooms, meals, and playtime included.</div>
+                <div class="service-price">$60/night</div>
+            </div>
+        </div>
+
+        <!-- Booking Form + History -->
+        <div class="booking-content">
+            <!-- Form -->
+            <div class="booking-form-card" id="bookingFormCard">
+                <h3>📝 Appointment Details</h3>
+                <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label">Selected Service *</label>
+                        <input type="text" class="form-input" id="selectedServiceDisplay" readonly placeholder="← Click a service above to select">
+                        <input type="hidden" id="selectedService" required>
+                        <span class="form-error">Please select a service</span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Pet Name *</label>
+                            <input type="text" class="form-input" id="petName" placeholder="e.g. Buddy" required>
+                            <span class="form-error">Please enter your pet's name</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Pet Type</label>
+                            <select class="form-select" id="petType">
+                                <option value="dog">🐕 Dog</option>
+                                <option value="cat">🐈 Cat</option>
+                                <option value="bird">🐦 Bird</option>
+                                <option value="rabbit">🐰 Rabbit</option>
+                                <option value="other">🐾 Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Appointment Date *</label>
+                            <input type="date" class="form-input" id="appointmentDate" required>
+                            <span class="form-error">Please select a date</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Preferred Time *</label>
+                            <div class="time-slots" id="timeSlots">
+                                <div class="time-slot" onclick="selectTime(this, '09:00')">9:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '10:00')">10:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '11:00')">11:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '13:00')">13:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '14:00')">14:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '15:00')">15:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '16:00')">16:00</div>
+                                <div class="time-slot" onclick="selectTime(this, '17:00')">17:00</div>
+                            </div>
+                            <input type="hidden" id="selectedTime" required>
+                            <span class="form-error">Please select a time slot</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Your Name *</label>
+                            <input type="text" class="form-input" id="ownerName" placeholder="Your full name" required>
+                            <span class="form-error">Please enter your name</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Phone Number *</label>
+                            <input type="tel" class="form-input" id="ownerPhone" placeholder="e.g. 0901234567" required>
+                            <span class="form-error">Please enter your phone number</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="ownerEmail" placeholder="your@email.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Special Notes</label>
+                        <textarea class="form-textarea" id="bookingNotes" placeholder="Any special requirements, allergies, or concerns..." rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-full" id="submitBookingBtn">
+                        📅 Confirm Booking
+                    </button>
+                </form>
+            </div>
+
+            <!-- History -->
+            <div class="booking-history-card">
+                <h3>📋 Booking History</h3>
+                <div id="bookingHistory">
+                    <div class="empty-state" style="padding: var(--space-xl) 0;">
+                        <div class="empty-state-icon" style="font-size: 3rem;">📅</div>
+                        <p style="font-size: var(--fs-sm);">No bookings yet. Fill out the form to book your first service!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="navbar-logo">
+                    <span class="logo-icon">🐾</span>
+                    <span>PetHub</span>
+                </a>
+                <p>Your all-in-one pet ecosystem. Shop supplies, book services, track health, and adopt rescue pets.</p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Platform</h4>
+                <div class="footer-links">
+                    <a href="shop.html">Pet Shop</a>
+                    <a href="booking.html">Book Services</a>
+                    <a href="health.html">Health Tracker</a>
+                    <a href="rescue.html">Rescue & Adopt</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Services</h4>
+                <div class="footer-links">
+                    <a href="booking.html">Grooming</a>
+                    <a href="booking.html">Vet Checkup</a>
+                    <a href="booking.html">Pet Walking</a>
+                    <a href="booking.html">Pet Boarding</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <div class="footer-links">
+                    <a href="#">Help Center</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PetHub. Made with ❤️ for pets everywhere.</span>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="YouTube">🎥</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        let selectedServiceValue = '';
+        let selectedTimeValue = '';
+
+        const serviceNames = {
+            'grooming': '✂️ Grooming ($45)',
+            'vet-checkup': '🩺 Vet Checkup ($80)',
+            'pet-walking': '🚶 Pet Walking ($25)',
+            'boarding': '🏠 Pet Boarding ($60/night)'
+        };
+
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', () => {
+            const dateInput = document.getElementById('appointmentDate');
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+            loadBookingHistory();
+        });
+
+        // ========================================
+        // Select Service
+        // ========================================
+        function selectService(el, service) {
+            document.querySelectorAll('.service-card').forEach(card => card.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedServiceValue = service;
+            document.getElementById('selectedService').value = service;
+            document.getElementById('selectedServiceDisplay').value = serviceNames[service] || service;
+        }
+
+        // ========================================
+        // Select Time Slot
+        // ========================================
+        function selectTime(el, time) {
+            if (el.classList.contains('disabled')) return;
+            document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedTimeValue = time;
+            document.getElementById('selectedTime').value = time;
+        }
+
+        // ========================================
+        // Form Validation
+        // ========================================
+        function validateForm() {
+            let valid = true;
+
+            const fields = [
+                { id: 'selectedService', value: selectedServiceValue },
+                { id: 'petName', value: document.getElementById('petName').value },
+                { id: 'appointmentDate', value: document.getElementById('appointmentDate').value },
+                { id: 'selectedTime', value: selectedTimeValue },
+                { id: 'ownerName', value: document.getElementById('ownerName').value },
+                { id: 'ownerPhone', value: document.getElementById('ownerPhone').value }
+            ];
+
+            fields.forEach(field => {
+                const input = document.getElementById(field.id);
+                const group = input.closest('.form-group');
+                if (!field.value.trim()) {
+                    if (group) group.classList.add('error');
+                    valid = false;
+                } else {
+                    if (group) group.classList.remove('error');
+                }
+            });
+
+            return valid;
+        }
+
+        // ========================================
+        // Submit Booking
+        // ========================================
+        async function handleBookingSubmit(e) {
+            e.preventDefault();
+
+            if (!validateForm()) {
+                showToast('Please fill in all required fields', 'warning');
+                return;
+            }
+
+            const data = {
+                service: selectedServiceValue,
+                serviceName: serviceNames[selectedServiceValue],
+                petName: document.getElementById('petName').value,
+                petType: document.getElementById('petType').value,
+                date: document.getElementById('appointmentDate').value,
+                time: selectedTimeValue,
+                ownerName: document.getElementById('ownerName').value,
+                phone: document.getElementById('ownerPhone').value,
+                email: document.getElementById('ownerEmail').value,
+                notes: document.getElementById('bookingNotes').value
+            };
+
+            const result = await API.submitBooking(data);
+
+            if (result.success) {
+                showToast('Booking confirmed! 🎉', 'success');
+                
+                // Show success state
+                const formCard = document.getElementById('bookingFormCard');
+                formCard.innerHTML = `
+                    <div class="booking-success">
+                        <div class="booking-success-icon">✓</div>
+                        <h3>Booking Confirmed!</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: var(--space-md);">
+                            Your appointment has been scheduled successfully.
+                        </p>
+                        <div style="background: var(--bg-primary); border-radius: var(--radius-md); padding: var(--space-lg); text-align: left; margin-bottom: var(--space-xl);">
+                            <p style="font-size: var(--fs-sm); margin-bottom: 8px;"><strong>ID:</strong> ${result.booking.id}</p>
+                            <p style="font-size: var(--fs-sm); margin-bottom: 8px;"><strong>Service:</strong> ${data.serviceName}</p>
+                            <p style="font-size: var(--fs-sm); margin-bottom: 8px;"><strong>Pet:</strong> ${data.petName}</p>
+                            <p style="font-size: var(--fs-sm); margin-bottom: 8px;"><strong>Date:</strong> ${data.date}</p>
+                            <p style="font-size: var(--fs-sm);"><strong>Time:</strong> ${data.time}</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="location.reload()">📅 Book Another Service</button>
+                    </div>
+                `;
+
+                loadBookingHistory();
+            }
+        }
+
+        // ========================================
+        // Load Booking History
+        // ========================================
+        function loadBookingHistory() {
+            const bookings = API.getBookings();
+            const container = document.getElementById('bookingHistory');
+
+            if (bookings.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="padding: var(--space-xl) 0;">
+                        <div class="empty-state-icon" style="font-size: 3rem;">📅</div>
+                        <p style="font-size: var(--fs-sm);">No bookings yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = bookings.reverse().map(b => `
+                <div class="history-item">
+                    <div class="history-item-header">
+                        <span class="history-item-service">${b.serviceName || b.service}</span>
+                        <span class="badge badge-success">${b.status}</span>
+                    </div>
+                    <div class="history-item-detail">
+                        🐾 ${b.petName} · 📅 ${b.date} · ⏰ ${b.time}
+                    </div>
+                    <div class="history-item-id">${b.id}</div>
+                </div>
+            `).join('');
+        }
+
+        // Clear errors on input
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('input', () => {
+                const group = input.closest('.form-group');
+                if (group) group.classList.remove('error');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Track your pet's health records — vaccinations, checkups, medications, and surgeries. Full CRUD management.">
+    <title>Health Tracker — PetHub</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+    <style>
+        .health-layout {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-xl) var(--space-4xl);
+        }
+
+        /* Stats Overview */
+        .health-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-md);
+            margin-bottom: var(--space-2xl);
+        }
+
+        .health-stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .health-stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .health-stat-card:nth-child(1) .health-stat-icon { background: rgba(255,107,107,0.1); }
+        .health-stat-card:nth-child(2) .health-stat-icon { background: rgba(78,205,196,0.1); }
+        .health-stat-card:nth-child(3) .health-stat-icon { background: rgba(255,230,109,0.1); }
+        .health-stat-card:nth-child(4) .health-stat-icon { background: rgba(59,130,246,0.1); }
+
+        .health-stat-value {
+            font-family: var(--font-heading);
+            font-size: var(--fs-2xl);
+            font-weight: 700;
+        }
+
+        .health-stat-label {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+        }
+
+        /* Toolbar */
+        .health-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: var(--space-md);
+            margin-bottom: var(--space-xl);
+        }
+
+        .health-toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            flex-wrap: wrap;
+        }
+
+        .health-search {
+            position: relative;
+            width: 280px;
+        }
+
+        .health-search input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            background: var(--bg-secondary);
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-full);
+            color: var(--text-primary);
+            font-size: var(--fs-sm);
+            outline: none;
+            transition: all var(--transition-base);
+        }
+
+        .health-search input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.1);
+        }
+
+        .health-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Records List — Card View */
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: var(--space-lg);
+        }
+
+        .record-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: all var(--transition-base);
+        }
+
+        .record-card:hover {
+            box-shadow: var(--shadow-md);
+        }
+
+        .record-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: var(--space-md);
+        }
+
+        .record-type-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .record-type-icon.vaccination { background: rgba(34,197,94,0.1); }
+        .record-type-icon.checkup { background: rgba(59,130,246,0.1); }
+        .record-type-icon.medication { background: rgba(245,158,11,0.1); }
+        .record-type-icon.surgery { background: rgba(239,68,68,0.1); }
+
+        .record-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .record-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--bg-primary);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all var(--transition-fast);
+        }
+
+        .record-action-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .record-action-btn.delete:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: rgba(239,68,68,0.05);
+        }
+
+        .record-pet-name {
+            font-family: var(--font-heading);
+            font-size: var(--fs-md);
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .record-type-label {
+            font-size: var(--fs-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .record-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-sm);
+            margin-top: var(--space-md);
+            padding-top: var(--space-md);
+            border-top: 1px solid var(--border-color-light);
+        }
+
+        .record-detail {
+            font-size: var(--fs-xs);
+        }
+
+        .record-detail-label {
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .record-detail-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .record-notes {
+            margin-top: var(--space-sm);
+            padding-top: var(--space-sm);
+            border-top: 1px solid var(--border-color-light);
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        /* Delete Confirmation Modal */
+        .delete-modal-body {
+            text-align: center;
+            padding: var(--space-xl);
+        }
+
+        .delete-modal-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(239,68,68,0.1);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto var(--space-lg);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            box-shadow: 0 4px 15px rgba(239,68,68,0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(239,68,68,0.4);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .health-stats { grid-template-columns: repeat(2, 1fr); }
+            .health-toolbar { flex-direction: column; align-items: stretch; }
+            .health-toolbar-left { flex-direction: column; }
+            .health-search { width: 100%; }
+            .records-grid { grid-template-columns: 1fr; }
+            .record-details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-logo">
+                <span class="logo-icon">🐾</span>
+                <span>PetHub</span>
+            </a>
+            <div class="navbar-links" id="navLinks">
+                <a href="index.html">🏠 Dashboard</a>
+                <a href="shop.html">🛍️ Shop</a>
+                <a href="booking.html">📅 Booking</a>
+                <a href="health.html" class="active">💊 Health</a>
+                <a href="rescue.html">🐶 Rescue</a>
+            </div>
+            <div class="navbar-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button class="cart-btn" onclick="Cart.toggleDrawer()" id="cartBtn" aria-label="Shopping cart">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <h3>🛒 Your Cart</h3>
+            <button class="modal-close" onclick="Cart.toggleDrawer()">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cartDrawerBody"></div>
+        <div class="cart-drawer-footer" id="cartDrawerFooter"></div>
+    </aside>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <span class="section-label">💊 Health Tracker</span>
+        <h1>Pet Health Records</h1>
+        <p>Track vaccinations, checkups, medications, and surgeries for all your pets.</p>
+    </header>
+
+    <main class="health-layout">
+        <!-- Stats Overview -->
+        <div class="health-stats" id="healthStats">
+            <div class="health-stat-card">
+                <div class="health-stat-icon">📋</div>
+                <div>
+                    <div class="health-stat-value" id="statTotal">0</div>
+                    <div class="health-stat-label">Total Records</div>
+                </div>
+            </div>
+            <div class="health-stat-card">
+                <div class="health-stat-icon">💉</div>
+                <div>
+                    <div class="health-stat-value" id="statVaccinations">0</div>
+                    <div class="health-stat-label">Vaccinations</div>
+                </div>
+            </div>
+            <div class="health-stat-card">
+                <div class="health-stat-icon">🩺</div>
+                <div>
+                    <div class="health-stat-value" id="statCheckups">0</div>
+                    <div class="health-stat-label">Checkups</div>
+                </div>
+            </div>
+            <div class="health-stat-card">
+                <div class="health-stat-icon">💊</div>
+                <div>
+                    <div class="health-stat-value" id="statMedications">0</div>
+                    <div class="health-stat-label">Medications</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="health-toolbar">
+            <div class="health-toolbar-left">
+                <div class="filter-bar">
+                    <button class="filter-btn active" data-filter="all" onclick="filterRecords('all')">All</button>
+                    <button class="filter-btn" data-filter="vaccination" onclick="filterRecords('vaccination')">💉 Vaccination</button>
+                    <button class="filter-btn" data-filter="checkup" onclick="filterRecords('checkup')">🩺 Checkup</button>
+                    <button class="filter-btn" data-filter="medication" onclick="filterRecords('medication')">💊 Medication</button>
+                    <button class="filter-btn" data-filter="surgery" onclick="filterRecords('surgery')">🔬 Surgery</button>
+                </div>
+                <div class="health-search">
+                    <span class="health-search-icon">🔍</span>
+                    <input type="text" id="healthSearch" placeholder="Search by pet name..." oninput="handleHealthSearch(this.value)">
+                </div>
+            </div>
+            <button class="btn btn-primary" onclick="openAddModal()">
+                ➕ Add Record
+            </button>
+        </div>
+
+        <!-- Records Grid -->
+        <div class="records-grid" id="recordsGrid">
+            <!-- Rendered dynamically -->
+        </div>
+    </main>
+
+    <!-- Add/Edit Record Modal -->
+    <div class="modal-overlay" id="recordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">➕ Add Health Record</h3>
+                <button class="modal-close" onclick="closeModal('recordModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="healthForm" onsubmit="handleHealthSubmit(event)">
+                    <input type="hidden" id="recordId">
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                        <div class="form-group">
+                            <label class="form-label">Pet Name *</label>
+                            <input type="text" class="form-input" id="recordPetName" placeholder="e.g. Buddy" required>
+                            <span class="form-error">Required</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Record Type *</label>
+                            <select class="form-select" id="recordType" required>
+                                <option value="">Select type...</option>
+                                <option value="vaccination">💉 Vaccination</option>
+                                <option value="checkup">🩺 Checkup</option>
+                                <option value="medication">💊 Medication</option>
+                                <option value="surgery">🔬 Surgery</option>
+                            </select>
+                            <span class="form-error">Required</span>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                        <div class="form-group">
+                            <label class="form-label">Date *</label>
+                            <input type="date" class="form-input" id="recordDate" required>
+                            <span class="form-error">Required</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Veterinarian</label>
+                            <input type="text" class="form-input" id="recordVet" placeholder="Dr. Smith">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Description / Diagnosis</label>
+                        <input type="text" class="form-input" id="recordDescription" placeholder="e.g. Annual rabies vaccine">
+                    </div>
+
+                    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+                        <div class="form-group">
+                            <label class="form-label">Next Appointment</label>
+                            <input type="date" class="form-input" id="recordNextAppt">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Cost ($)</label>
+                            <input type="number" class="form-input" id="recordCost" placeholder="0.00" step="0.01" min="0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-textarea" id="recordNotes" placeholder="Additional notes..." rows="3"></textarea>
+                    </div>
+
+                    <div class="modal-footer" style="border: none; padding: 0; margin-top: var(--space-lg);">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('recordModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="saveRecordBtn">💾 Save Record</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width: 420px;">
+            <div class="modal-body">
+                <div class="delete-modal-body">
+                    <div class="delete-modal-icon">⚠️</div>
+                    <h3>Delete Record?</h3>
+                    <p style="color: var(--text-secondary); margin: var(--space-sm) 0 var(--space-xl);">
+                        This action cannot be undone. The health record will be permanently removed.
+                    </p>
+                    <div class="d-flex gap-sm justify-center">
+                        <button class="btn btn-secondary" onclick="closeModal('deleteModal')">Cancel</button>
+                        <button class="btn btn-danger" id="confirmDeleteBtn" onclick="confirmDelete()">🗑️ Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="navbar-logo">
+                    <span class="logo-icon">🐾</span>
+                    <span>PetHub</span>
+                </a>
+                <p>Your all-in-one pet ecosystem. Shop supplies, book services, track health, and adopt rescue pets.</p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Platform</h4>
+                <div class="footer-links">
+                    <a href="shop.html">Pet Shop</a>
+                    <a href="booking.html">Book Services</a>
+                    <a href="health.html">Health Tracker</a>
+                    <a href="rescue.html">Rescue & Adopt</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Services</h4>
+                <div class="footer-links">
+                    <a href="booking.html">Grooming</a>
+                    <a href="booking.html">Vet Checkup</a>
+                    <a href="booking.html">Pet Walking</a>
+                    <a href="booking.html">Pet Boarding</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <div class="footer-links">
+                    <a href="#">Help Center</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PetHub. Made with ❤️ for pets everywhere.</span>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="YouTube">🎥</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        let currentFilter = 'all';
+        let searchQuery = '';
+        let deleteTargetId = null;
+
+        const typeIcons = {
+            vaccination: '💉',
+            checkup: '🩺',
+            medication: '💊',
+            surgery: '🔬'
+        };
+
+        const typeColors = {
+            vaccination: '#22c55e',
+            checkup: '#3b82f6',
+            medication: '#f59e0b',
+            surgery: '#ef4444'
+        };
+
+        // ========================================
+        // Initialize
+        // ========================================
+        document.addEventListener('DOMContentLoaded', () => {
+            renderRecords();
+            updateStats();
+        });
+
+        // ========================================
+        // Update Stats
+        // ========================================
+        function updateStats() {
+            const records = API.healthRecords.getAll();
+            document.getElementById('statTotal').textContent = records.length;
+            document.getElementById('statVaccinations').textContent = records.filter(r => r.type === 'vaccination').length;
+            document.getElementById('statCheckups').textContent = records.filter(r => r.type === 'checkup').length;
+            document.getElementById('statMedications').textContent = records.filter(r => r.type === 'medication').length;
+        }
+
+        // ========================================
+        // Filter Records
+        // ========================================
+        function filterRecords(type) {
+            currentFilter = type;
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === type);
+            });
+            renderRecords();
+        }
+
+        // ========================================
+        // Search
+        // ========================================
+        let searchTimeout;
+        function handleHealthSearch(query) {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                searchQuery = query.toLowerCase();
+                renderRecords();
+            }, 200);
+        }
+
+        // ========================================
+        // Render Records
+        // ========================================
+        function renderRecords() {
+            let records = API.healthRecords.getAll();
+
+            if (currentFilter !== 'all') {
+                records = records.filter(r => r.type === currentFilter);
+            }
+
+            if (searchQuery) {
+                records = records.filter(r =>
+                    r.petName.toLowerCase().includes(searchQuery) ||
+                    (r.description && r.description.toLowerCase().includes(searchQuery))
+                );
+            }
+
+            // Sort by date descending
+            records.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            const grid = document.getElementById('recordsGrid');
+
+            if (records.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <div class="empty-state-icon">📋</div>
+                        <h3>No health records${currentFilter !== 'all' ? ' for this type' : ''}</h3>
+                        <p>Click "Add Record" to create your first pet health record.</p>
+                        <button class="btn btn-primary mt-lg" onclick="openAddModal()">➕ Add Record</button>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = records.map(record => `
+                <div class="record-card">
+                    <div class="record-header">
+                        <div class="d-flex items-center gap-md">
+                            <div class="record-type-icon ${record.type}">
+                                ${typeIcons[record.type] || '📋'}
+                            </div>
+                            <div>
+                                <div class="record-pet-name">${record.petName}</div>
+                                <div class="record-type-label" style="color: ${typeColors[record.type]}">
+                                    ${record.type}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="record-actions">
+                            <button class="record-action-btn" onclick="openEditModal('${record.id}')" title="Edit">✏️</button>
+                            <button class="record-action-btn delete" onclick="openDeleteModal('${record.id}')" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+
+                    ${record.description ? `<p style="font-size: var(--fs-sm); color: var(--text-secondary); margin-bottom: var(--space-xs);">${record.description}</p>` : ''}
+
+                    <div class="record-details">
+                        <div class="record-detail">
+                            <div class="record-detail-label">📅 Date</div>
+                            <div class="record-detail-value">${formatDate(record.date)}</div>
+                        </div>
+                        <div class="record-detail">
+                            <div class="record-detail-label">👨‍⚕️ Vet</div>
+                            <div class="record-detail-value">${record.vet || '—'}</div>
+                        </div>
+                        ${record.nextAppointment ? `
+                        <div class="record-detail">
+                            <div class="record-detail-label">📆 Next Appointment</div>
+                            <div class="record-detail-value">${formatDate(record.nextAppointment)}</div>
+                        </div>` : ''}
+                        ${record.cost ? `
+                        <div class="record-detail">
+                            <div class="record-detail-label">💰 Cost</div>
+                            <div class="record-detail-value">$${parseFloat(record.cost).toFixed(2)}</div>
+                        </div>` : ''}
+                    </div>
+
+                    ${record.notes ? `<div class="record-notes">📝 ${record.notes}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        // ========================================
+        // Format Date
+        // ========================================
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            const d = new Date(dateStr + 'T00:00:00');
+            return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        // ========================================
+        // Modal Helpers
+        // ========================================
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // ========================================
+        // Open Add Modal
+        // ========================================
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = '➕ Add Health Record';
+            document.getElementById('saveRecordBtn').textContent = '💾 Save Record';
+            document.getElementById('healthForm').reset();
+            document.getElementById('recordId').value = '';
+            openModal('recordModal');
+        }
+
+        // ========================================
+        // Open Edit Modal
+        // ========================================
+        function openEditModal(id) {
+            const record = API.healthRecords.getById(id);
+            if (!record) return;
+
+            document.getElementById('modalTitle').textContent = '✏️ Edit Health Record';
+            document.getElementById('saveRecordBtn').textContent = '💾 Update Record';
+            document.getElementById('recordId').value = record.id;
+            document.getElementById('recordPetName').value = record.petName;
+            document.getElementById('recordType').value = record.type;
+            document.getElementById('recordDate').value = record.date;
+            document.getElementById('recordVet').value = record.vet || '';
+            document.getElementById('recordDescription').value = record.description || '';
+            document.getElementById('recordNextAppt').value = record.nextAppointment || '';
+            document.getElementById('recordCost').value = record.cost || '';
+            document.getElementById('recordNotes').value = record.notes || '';
+
+            openModal('recordModal');
+        }
+
+        // ========================================
+        // Handle Form Submit (Create/Update)
+        // ========================================
+        function handleHealthSubmit(e) {
+            e.preventDefault();
+
+            const id = document.getElementById('recordId').value;
+            const data = {
+                petName: document.getElementById('recordPetName').value,
+                type: document.getElementById('recordType').value,
+                date: document.getElementById('recordDate').value,
+                vet: document.getElementById('recordVet').value,
+                description: document.getElementById('recordDescription').value,
+                nextAppointment: document.getElementById('recordNextAppt').value,
+                cost: document.getElementById('recordCost').value,
+                notes: document.getElementById('recordNotes').value
+            };
+
+            if (id) {
+                // Update
+                API.healthRecords.update(id, data);
+                showToast('Record updated successfully!', 'success');
+            } else {
+                // Create
+                API.healthRecords.create(data);
+                showToast('Record added successfully!', 'success');
+            }
+
+            closeModal('recordModal');
+            renderRecords();
+            updateStats();
+        }
+
+        // ========================================
+        // Delete Record
+        // ========================================
+        function openDeleteModal(id) {
+            deleteTargetId = id;
+            openModal('deleteModal');
+        }
+
+        function confirmDelete() {
+            if (!deleteTargetId) return;
+
+            const deleted = API.healthRecords.delete(deleteTargetId);
+            if (deleted) {
+                showToast('Record deleted', 'info');
+            }
+
+            deleteTargetId = null;
+            closeModal('deleteModal');
+            renderRecords();
+            updateStats();
+        }
+    </script>
+</body>
+</html>

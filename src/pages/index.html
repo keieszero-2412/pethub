@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PetHub — Your all-in-one pet ecosystem. Shop pet supplies, book grooming services, track pet health, and adopt rescue animals.">
+    <title>PetHub — Find Your Perfect Companion</title>
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
+    <style>
+        /* ========================================
+           Hero Section
+           ======================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 70px var(--space-xl) 0;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 50%, rgba(255, 107, 107, 0.12) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(255, 230, 109, 0.08) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 8px 20px;
+            background: rgba(var(--color-primary-rgb), 0.08);
+            border: 1px solid rgba(var(--color-primary-rgb), 0.15);
+            color: var(--color-primary);
+            font-family: var(--font-heading);
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            border-radius: var(--radius-full);
+            margin-bottom: var(--space-xl);
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: var(--space-lg);
+            animation: fadeInUp 0.8s ease;
+            line-height: 1.1;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: var(--fs-lg);
+            max-width: 600px;
+            margin: 0 auto var(--space-2xl);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-md);
+            animation: fadeInUp 0.8s ease 0.4s both;
+            flex-wrap: wrap;
+        }
+
+        /* Floating decorative elements */
+        .hero-float {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.15;
+            animation: float 4s ease-in-out infinite;
+            z-index: 0;
+        }
+
+        .hero-float:nth-child(1) { top: 15%; left: 8%; animation-delay: 0s; }
+        .hero-float:nth-child(2) { top: 25%; right: 10%; animation-delay: 1s; font-size: 2.5rem; }
+        .hero-float:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 2s; font-size: 2rem; }
+        .hero-float:nth-child(4) { bottom: 30%; right: 8%; animation-delay: 0.5s; font-size: 3.5rem; }
+        .hero-float:nth-child(5) { top: 60%; left: 5%; animation-delay: 1.5s; font-size: 2rem; }
+
+        /* ========================================
+           Stats Bar
+           ======================================== */
+        .stats-bar {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--space-2xl) var(--space-xl);
+        }
+
+        .stats-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-xl);
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: var(--space-md);
+        }
+
+        .stat-value {
+            font-family: var(--font-heading);
+            font-size: var(--fs-3xl);
+            font-weight: 800;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* ========================================
+           Quick Nav Cards
+           ======================================== */
+        .quick-nav-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-xl);
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .nav-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity var(--transition-base);
+            border-radius: var(--radius-xl);
+        }
+
+        .nav-card:nth-child(1)::before { background: linear-gradient(135deg, rgba(255,107,107,0.05), rgba(255,107,107,0.02)); }
+        .nav-card:nth-child(2)::before { background: linear-gradient(135deg, rgba(78,205,196,0.05), rgba(78,205,196,0.02)); }
+        .nav-card:nth-child(3)::before { background: linear-gradient(135deg, rgba(255,230,109,0.05), rgba(255,230,109,0.02)); }
+        .nav-card:nth-child(4)::before { background: linear-gradient(135deg, rgba(59,130,246,0.05), rgba(59,130,246,0.02)); }
+
+        .nav-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .nav-card:hover::before {
+            opacity: 1;
+        }
+
+        .nav-card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto var(--space-lg);
+        }
+
+        .nav-card:nth-child(1) .nav-card-icon { background: rgba(255,107,107,0.1); }
+        .nav-card:nth-child(2) .nav-card-icon { background: rgba(78,205,196,0.1); }
+        .nav-card:nth-child(3) .nav-card-icon { background: rgba(255,230,109,0.1); }
+        .nav-card:nth-child(4) .nav-card-icon { background: rgba(59,130,246,0.1); }
+
+        .nav-card h3 {
+            font-size: var(--fs-lg);
+            margin-bottom: var(--space-sm);
+        }
+
+        .nav-card p {
+            font-size: var(--fs-sm);
+            margin-bottom: var(--space-md);
+        }
+
+        .nav-card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: var(--fs-sm);
+            font-weight: 600;
+            color: var(--color-primary);
+            transition: gap var(--transition-base);
+        }
+
+        .nav-card:hover .nav-card-link {
+            gap: 10px;
+        }
+
+        /* ========================================
+           Featured Pets
+           ======================================== */
+        .featured-pets-scroll {
+            display: flex;
+            gap: var(--space-xl);
+            overflow-x: auto;
+            padding: var(--space-md) 0 var(--space-lg);
+            scroll-snap-type: x mandatory;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .featured-pets-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .featured-pet-card {
+            flex: 0 0 300px;
+            scroll-snap-align: start;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: all var(--transition-base);
+        }
+
+        .featured-pet-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .featured-pet-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .featured-pet-info {
+            padding: var(--space-lg);
+        }
+
+        .featured-pet-info h4 {
+            font-size: var(--fs-lg);
+            margin-bottom: 4px;
+        }
+
+        .featured-pet-info .pet-breed {
+            font-size: var(--fs-sm);
+            color: var(--text-muted);
+            margin-bottom: var(--space-sm);
+        }
+
+        .featured-pet-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-xs);
+        }
+
+        /* ========================================
+           Testimonials
+           ======================================== */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-xl);
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 16px;
+            left: 24px;
+            font-size: 4rem;
+            font-family: var(--font-heading);
+            color: var(--color-primary);
+            opacity: 0.15;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-size: var(--fs-sm);
+            line-height: var(--lh-relaxed);
+            color: var(--text-secondary);
+            margin-bottom: var(--space-lg);
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+        }
+
+        .testimonial-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .testimonial-name {
+            font-weight: 700;
+            font-size: var(--fs-sm);
+        }
+
+        .testimonial-role {
+            font-size: var(--fs-xs);
+            color: var(--text-muted);
+        }
+
+        /* ========================================
+           CTA Section
+           ======================================== */
+        .cta-section {
+            background: linear-gradient(135deg, var(--color-navy), var(--color-navy-light));
+            border-radius: var(--radius-xl);
+            padding: var(--space-4xl);
+            text-align: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 107, 107, 0.15), transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(78, 205, 196, 0.1), transparent 50%);
+        }
+
+        .cta-section h2 {
+            color: white;
+            margin-bottom: var(--space-md);
+            position: relative;
+        }
+
+        .cta-section p {
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 500px;
+            margin: 0 auto var(--space-xl);
+            position: relative;
+        }
+
+        .cta-section .btn {
+            position: relative;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .quick-nav-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonials-grid { grid-template-columns: 1fr; max-width: 600px; }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .cta-section { padding: var(--space-2xl); margin: 0 var(--space-md); }
+        }
+
+        @media (max-width: 480px) {
+            .quick-nav-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-logo">
+                <span class="logo-icon">🐾</span>
+                <span>PetHub</span>
+            </a>
+
+            <div class="navbar-links" id="navLinks">
+                <a href="index.html" class="active">🏠 Dashboard</a>
+                <a href="shop.html">🛍️ Shop</a>
+                <a href="booking.html">📅 Booking</a>
+                <a href="health.html">💊 Health</a>
+                <a href="rescue.html">🐶 Rescue</a>
+            </div>
+
+            <div class="navbar-actions">
+                <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
+                <button class="cart-btn" onclick="Cart.toggleDrawer()" id="cartBtn" aria-label="Shopping cart">
+                    🛒
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Cart Drawer -->
+    <div class="cart-overlay" id="cartOverlay"></div>
+    <aside class="cart-drawer" id="cartDrawer">
+        <div class="cart-drawer-header">
+            <h3>🛒 Your Cart</h3>
+            <button class="modal-close" onclick="Cart.toggleDrawer()">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cartDrawerBody"></div>
+        <div class="cart-drawer-footer" id="cartDrawerFooter"></div>
+    </aside>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-float">🐕</div>
+        <div class="hero-float">🐈</div>
+        <div class="hero-float">🐦</div>
+        <div class="hero-float">🐰</div>
+        <div class="hero-float">🐾</div>
+
+        <div class="hero-content">
+            <div class="hero-badge">🌟 #1 Pet Care Platform</div>
+            <h1>Find Your <span class="gradient-text">Perfect Companion</span></h1>
+            <p>Your all-in-one pet ecosystem — shop premium supplies, book grooming services, track health records, and give rescue pets a forever home.</p>
+            <div class="hero-actions">
+                <a href="rescue.html" class="btn btn-primary btn-lg">🐾 Adopt a Pet</a>
+                <a href="shop.html" class="btn btn-secondary btn-lg">🛍️ Shop Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Bar -->
+    <section class="stats-bar" id="statsBar">
+        <div class="stats-grid">
+            <div class="stat-item reveal">
+                <div class="stat-value" data-count="2847">0</div>
+                <div class="stat-label">Pets Adopted</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-value" data-count="150">0</div>
+                <div class="stat-label">Products Available</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-value" data-count="12500">0</div>
+                <div class="stat-label">Happy Families</div>
+            </div>
+            <div class="stat-item reveal">
+                <div class="stat-value" data-count="98">0</div>
+                <div class="stat-label">Expert Vets</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Navigation -->
+    <section class="section" id="quickNav">
+        <div class="section-header">
+            <span class="section-label">🚀 Quick Access</span>
+            <h2>Explore PetHub</h2>
+            <p>Everything you need for your pet, all in one place.</p>
+        </div>
+        <div class="quick-nav-grid">
+            <a href="shop.html" class="nav-card reveal">
+                <div class="nav-card-icon">🛍️</div>
+                <h3>Pet Shop</h3>
+                <p>Premium food, toys, accessories, and health supplies for your furry friends.</p>
+                <span class="nav-card-link">Browse Products →</span>
+            </a>
+            <a href="booking.html" class="nav-card reveal">
+                <div class="nav-card-icon">📅</div>
+                <h3>Book Services</h3>
+                <p>Schedule grooming, vet checkups, pet walking, and boarding services.</p>
+                <span class="nav-card-link">Book Now →</span>
+            </a>
+            <a href="health.html" class="nav-card reveal">
+                <div class="nav-card-icon">💊</div>
+                <h3>Health Tracker</h3>
+                <p>Keep track of vaccinations, checkups, medications, and vet appointments.</p>
+                <span class="nav-card-link">Track Health →</span>
+            </a>
+            <a href="rescue.html" class="nav-card reveal">
+                <div class="nav-card-icon">🏠</div>
+                <h3>Rescue & Adopt</h3>
+                <p>Give a loving home to rescue pets. Browse dogs, cats, birds, and more.</p>
+                <span class="nav-card-link">View Pets →</span>
+            </a>
+        </div>
+    </section>
+
+    <!-- Featured Pets -->
+    <section class="section" id="featuredPets" style="background: var(--bg-secondary);">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">❤️ Looking for Love</span>
+                <h2>Featured Rescue Pets</h2>
+                <p>These adorable pets are waiting for their forever home. Will it be yours?</p>
+            </div>
+            <div class="featured-pets-scroll" id="featuredPetsScroll">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-label">💬 Happy Stories</span>
+                <h2>What Pet Parents Say</h2>
+                <p>Real stories from families who found their perfect companion through PetHub.</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"We adopted Bella through PetHub and she's brought so much joy to our family. The process was smooth and the team was incredibly supportive throughout."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩</div>
+                        <div>
+                            <div class="testimonial-name">Sarah Johnson</div>
+                            <div class="testimonial-role">Adopted a Golden Retriever</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"The health tracking feature is a lifesaver! I can keep all of Max's vet records in one place and never miss an appointment. Highly recommended!"</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👨</div>
+                        <div>
+                            <div class="testimonial-name">David Chen</div>
+                            <div class="testimonial-role">Dog owner for 5 years</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal">
+                    <p class="testimonial-text">"Best pet shop online! Quality products, fair prices, and fast delivery. I've been ordering all of Luna's food and toys from PetHub for months now."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">👩‍🦰</div>
+                        <div>
+                            <div class="testimonial-name">Emily Park</div>
+                            <div class="testimonial-role">Cat mom to 2 Persians</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="cta-section reveal">
+            <h2>Ready to Welcome a New Friend?</h2>
+            <p>Join thousands of happy pet families. Start your journey today — adopt, shop, or book a service.</p>
+            <div class="hero-actions">
+                <a href="rescue.html" class="btn btn-primary btn-lg">🐾 Start Adopting</a>
+                <a href="shop.html" class="btn btn-outline btn-lg" style="border-color: rgba(255,255,255,0.3); color: white;">Explore Shop</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <a href="index.html" class="navbar-logo">
+                    <span class="logo-icon">🐾</span>
+                    <span>PetHub</span>
+                </a>
+                <p>Your all-in-one pet ecosystem. Shop supplies, book services, track health, and adopt rescue pets — all in one beautiful platform.</p>
+            </div>
+            <div>
+                <h4 class="footer-heading">Platform</h4>
+                <div class="footer-links">
+                    <a href="shop.html">Pet Shop</a>
+                    <a href="booking.html">Book Services</a>
+                    <a href="health.html">Health Tracker</a>
+                    <a href="rescue.html">Rescue & Adopt</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Services</h4>
+                <div class="footer-links">
+                    <a href="booking.html">Grooming</a>
+                    <a href="booking.html">Vet Checkup</a>
+                    <a href="booking.html">Pet Walking</a>
+                    <a href="booking.html">Pet Boarding</a>
+                </div>
+            </div>
+            <div>
+                <h4 class="footer-heading">Support</h4>
+                <div class="footer-links">
+                    <a href="#">Help Center</a>
+                    <a href="#">Contact Us</a>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 PetHub. Made with ❤️ for pets everywhere.</span>
+            <div class="footer-socials">
+                <a href="#" aria-label="Facebook">📘</a>
+                <a href="#" aria-label="Instagram">📷</a>
+                <a href="#" aria-label="Twitter">🐦</a>
+                <a href="#" aria-label="YouTube">🎥</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // ========================================
+        // Animated Counters
+        // ========================================
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-value[data-count]');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const el = entry.target;
+                        const target = parseInt(el.dataset.count);
+                        const duration = 2000;
+                        const startTime = performance.now();
+
+                        function update(currentTime) {
+                            const elapsed = currentTime - startTime;
+                            const progress = Math.min(elapsed / duration, 1);
+                            // Ease out cubic
+                            const eased = 1 - Math.pow(1 - progress, 3);
+                            const current = Math.floor(eased * target);
+                            el.textContent = current.toLocaleString() + (target > 100 ? '+' : '');
+                            
+                            if (progress < 1) {
+                                requestAnimationFrame(update);
+                            }
+                        }
+
+                        requestAnimationFrame(update);
+                        observer.unobserve(el);
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            counters.forEach(counter => observer.observe(counter));
+        }
+
+        // ========================================
+        // Load Featured Pets
+        // ========================================
+        async function loadFeaturedPets() {
+            const pets = await API.fetchPets();
+            const available = pets.filter(p => p.status === 'available').slice(0, 6);
+            const scroll = document.getElementById('featuredPetsScroll');
+            
+            scroll.innerHTML = available.map(pet => `
+                <div class="featured-pet-card">
+                    <img src="${pet.image}" alt="${pet.name}" class="featured-pet-img" loading="lazy">
+                    <div class="featured-pet-info">
+                        <h4>${pet.name}</h4>
+                        <div class="pet-breed">${pet.breed} · ${pet.age}</div>
+                        <div class="featured-pet-tags">
+                            <span class="badge badge-primary">${pet.type}</span>
+                            <span class="badge badge-success">${pet.gender}</span>
+                            ${pet.vaccinated ? '<span class="badge badge-accent">Vaccinated ✓</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            animateCounters();
+            loadFeaturedPets();
+        });
+    </script>
+</body>
+</html>
