@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Track your pet's health records — vaccinations, checkups, medications, and surgeries. Full CRUD management.">
     <title>Health Tracker — PetHub</title>
-    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="/src/css/global.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
     <style>
         .health-layout {
@@ -270,16 +270,16 @@
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="navbar-inner">
-            <a href="index.html" class="navbar-logo">
+            <a href="/dashboard" class="navbar-logo">
                 <span class="logo-icon">🐾</span>
                 <span>PetHub</span>
             </a>
             <div class="navbar-links" id="navLinks">
-                <a href="index.html">🏠 Dashboard</a>
-                <a href="shop.html">🛍️ Shop</a>
-                <a href="booking.html">📅 Booking</a>
-                <a href="health.html" class="active">💊 Health</a>
-                <a href="rescue.html">🐶 Rescue</a>
+                <a href="/dashboard">🏠 Dashboard</a>
+                <a href="/shop">🛍️ Shop</a>
+                <a href="/booking">📅 Booking</a>
+                <a href="/health" class="active">💊 Health</a>
+                <a href="/rescue">🐶 Rescue</a>
             </div>
             <div class="navbar-actions">
                 <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" aria-label="Toggle theme">🌙</button>
@@ -466,7 +466,7 @@
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <a href="index.html" class="navbar-logo">
+                <a href="/dashboard" class="navbar-logo">
                     <span class="logo-icon">🐾</span>
                     <span>PetHub</span>
                 </a>
@@ -475,19 +475,19 @@
             <div>
                 <h4 class="footer-heading">Platform</h4>
                 <div class="footer-links">
-                    <a href="shop.html">Pet Shop</a>
-                    <a href="booking.html">Book Services</a>
-                    <a href="health.html">Health Tracker</a>
-                    <a href="rescue.html">Rescue & Adopt</a>
+                    <a href="/shop">Pet Shop</a>
+                    <a href="/booking">Book Services</a>
+                    <a href="/health">Health Tracker</a>
+                    <a href="/rescue">Rescue & Adopt</a>
                 </div>
             </div>
             <div>
                 <h4 class="footer-heading">Services</h4>
                 <div class="footer-links">
-                    <a href="booking.html">Grooming</a>
-                    <a href="booking.html">Vet Checkup</a>
-                    <a href="booking.html">Pet Walking</a>
-                    <a href="booking.html">Pet Boarding</a>
+                    <a href="/booking">Grooming</a>
+                    <a href="/booking">Vet Checkup</a>
+                    <a href="/booking">Pet Walking</a>
+                    <a href="/booking">Pet Boarding</a>
                 </div>
             </div>
             <div>
@@ -511,8 +511,8 @@
         </div>
     </footer>
 
-    <script src="../js/api.js"></script>
-    <script src="../js/cart.js"></script>
+    <script src="/src/js/api.js"></script>
+    <script src="/src/js/cart.js"></script>
     <script>
         let currentFilter = 'all';
         let searchQuery = '';

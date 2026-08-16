@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="PetHub — Your all-in-one pet ecosystem. Shop pet supplies, book grooming services, track pet health, and adopt rescue animals.">
     <title>PetHub — Find Your Perfect Companion</title>
-    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="/src/css/global.css">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐾</text></svg>">
     <style>
         /* ========================================
@@ -414,17 +414,17 @@
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="navbar-inner">
-            <a href="index.html" class="navbar-logo">
+            <a href="/dashboard" class="navbar-logo">
                 <span class="logo-icon">🐾</span>
                 <span>PetHub</span>
             </a>
 
             <div class="navbar-links" id="navLinks">
-                <a href="index.html" class="active">🏠 Dashboard</a>
-                <a href="shop.html">🛍️ Shop</a>
-                <a href="booking.html">📅 Booking</a>
-                <a href="health.html">💊 Health</a>
-                <a href="rescue.html">🐶 Rescue</a>
+                <a href="/dashboard" class="active">🏠 Dashboard</a>
+                <a href="/shop">🛍️ Shop</a>
+                <a href="/booking">📅 Booking</a>
+                <a href="/health">💊 Health</a>
+                <a href="/rescue">🐶 Rescue</a>
             </div>
 
             <div class="navbar-actions">
@@ -464,8 +464,8 @@
             <h1>Find Your <span class="gradient-text">Perfect Companion</span></h1>
             <p>Your all-in-one pet ecosystem — shop premium supplies, book grooming services, track health records, and give rescue pets a forever home.</p>
             <div class="hero-actions">
-                <a href="rescue.html" class="btn btn-primary btn-lg">🐾 Adopt a Pet</a>
-                <a href="shop.html" class="btn btn-secondary btn-lg">🛍️ Shop Now</a>
+                <a href="/rescue" class="btn btn-primary btn-lg">🐾 Adopt a Pet</a>
+                <a href="/shop" class="btn btn-secondary btn-lg">🛍️ Shop Now</a>
             </div>
         </div>
     </section>
@@ -500,25 +500,25 @@
             <p>Everything you need for your pet, all in one place.</p>
         </div>
         <div class="quick-nav-grid">
-            <a href="shop.html" class="nav-card reveal">
+            <a href="/shop" class="nav-card reveal">
                 <div class="nav-card-icon">🛍️</div>
                 <h3>Pet Shop</h3>
                 <p>Premium food, toys, accessories, and health supplies for your furry friends.</p>
                 <span class="nav-card-link">Browse Products →</span>
             </a>
-            <a href="booking.html" class="nav-card reveal">
+            <a href="/booking" class="nav-card reveal">
                 <div class="nav-card-icon">📅</div>
                 <h3>Book Services</h3>
                 <p>Schedule grooming, vet checkups, pet walking, and boarding services.</p>
                 <span class="nav-card-link">Book Now →</span>
             </a>
-            <a href="health.html" class="nav-card reveal">
+            <a href="/health" class="nav-card reveal">
                 <div class="nav-card-icon">💊</div>
                 <h3>Health Tracker</h3>
                 <p>Keep track of vaccinations, checkups, medications, and vet appointments.</p>
                 <span class="nav-card-link">Track Health →</span>
             </a>
-            <a href="rescue.html" class="nav-card reveal">
+            <a href="/rescue" class="nav-card reveal">
                 <div class="nav-card-icon">🏠</div>
                 <h3>Rescue & Adopt</h3>
                 <p>Give a loving home to rescue pets. Browse dogs, cats, birds, and more.</p>
@@ -590,8 +590,8 @@
             <h2>Ready to Welcome a New Friend?</h2>
             <p>Join thousands of happy pet families. Start your journey today — adopt, shop, or book a service.</p>
             <div class="hero-actions">
-                <a href="rescue.html" class="btn btn-primary btn-lg">🐾 Start Adopting</a>
-                <a href="shop.html" class="btn btn-outline btn-lg" style="border-color: rgba(255,255,255,0.3); color: white;">Explore Shop</a>
+                <a href="/rescue" class="btn btn-primary btn-lg">🐾 Start Adopting</a>
+                <a href="/shop" class="btn btn-outline btn-lg" style="border-color: rgba(255,255,255,0.3); color: white;">Explore Shop</a>
             </div>
         </div>
     </section>
@@ -600,7 +600,7 @@
     <footer class="footer">
         <div class="footer-inner">
             <div class="footer-brand">
-                <a href="index.html" class="navbar-logo">
+                <a href="/dashboard" class="navbar-logo">
                     <span class="logo-icon">🐾</span>
                     <span>PetHub</span>
                 </a>
@@ -609,19 +609,19 @@
             <div>
                 <h4 class="footer-heading">Platform</h4>
                 <div class="footer-links">
-                    <a href="shop.html">Pet Shop</a>
-                    <a href="booking.html">Book Services</a>
-                    <a href="health.html">Health Tracker</a>
-                    <a href="rescue.html">Rescue & Adopt</a>
+                    <a href="/shop">Pet Shop</a>
+                    <a href="/booking">Book Services</a>
+                    <a href="/health">Health Tracker</a>
+                    <a href="/rescue">Rescue & Adopt</a>
                 </div>
             </div>
             <div>
                 <h4 class="footer-heading">Services</h4>
                 <div class="footer-links">
-                    <a href="booking.html">Grooming</a>
-                    <a href="booking.html">Vet Checkup</a>
-                    <a href="booking.html">Pet Walking</a>
-                    <a href="booking.html">Pet Boarding</a>
+                    <a href="/booking">Grooming</a>
+                    <a href="/booking">Vet Checkup</a>
+                    <a href="/booking">Pet Walking</a>
+                    <a href="/booking">Pet Boarding</a>
                 </div>
             </div>
             <div>
@@ -646,8 +646,8 @@
     </footer>
 
     <!-- Scripts -->
-    <script src="../js/api.js"></script>
-    <script src="../js/cart.js"></script>
+    <script src="/src/js/api.js"></script>
+    <script src="/src/js/cart.js"></script>
     <script>
         // ========================================
         // Animated Counters
